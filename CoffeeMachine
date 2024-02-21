@@ -1,0 +1,82 @@
+import java.util.*
+
+enum class CoffeeType(val water: Int, val milk: Int, val beans: Int, val coffeeName: String) {
+    ESPRESSO(60, 0, 10, "эспрессо"),
+    AMERICANO(120, 0, 10, "американо"),
+    CAPPUCCINO(120, 60, 20, "капучино"),
+    LATTE(240, 120, 20, "латте");
+}
+
+class CoffeeMachine {
+    private var water = 0
+    private var milk = 0
+    private var beans = 0
+    private val scanner = Scanner(System.`in`)
+
+    private fun fill() {
+        water = 2000
+        milk = 1000
+        beans = 500
+        println("Ингридиенты пополнены")
+    }
+
+    private fun status() {
+        println("Ингридиентов осталось:")
+        println("$water мл воды")
+        println("$milk мл молока")
+        println("$beans гр кофе")
+    }
+
+    private fun makeCoffee(type: CoffeeType) {
+        if (water < type.water) {
+            println("Недостаточно воды!")
+            return
+        }
+        if (milk < type.milk) {
+            println("Недостаточно молока!")
+            return
+        }
+        if (beans < type.beans) {
+            println("Недостаточно кофе!")
+            return
+        }
+
+        water -= type.water
+        milk -= type.milk
+        beans -= type.beans
+
+        println("${type.coffeeName.capitalize()} готов")
+    }
+
+    fun start() {
+        println("Кофемашина готова к работе")
+        while (true) {
+            println("Введите команду")
+            when (scanner.nextLine().lowercase()) {
+                "выключить" -> {
+                    println("До свидания!")
+                    return
+                }
+                "наполнить" -> fill()
+                "статус" -> status()
+                "кофе" -> {
+                    println("Введите название напитка или \"назад\" для возврата в главное меню")
+                    val coffeeTypeInput = scanner.nextLine().lowercase()
+                    if (coffeeTypeInput == "назад") continue
+                    val type = CoffeeType.values().find { it.coffeeName == coffeeTypeInput }
+                    if (type != null) {
+                        makeCoffee(type)
+                    } else {
+                        println("Рецепт не найден!")
+                    }
+                }
+                else -> println("Неизвестная команда")
+            }
+        }
+    }
+}
+
+fun main() {
+    val coffeeMachine = CoffeeMachine()
+    coffeeMachine.start()
+}
